@@ -7,7 +7,18 @@ This repository provides code, exercises and solutions for popular Reinforcement
 
 Each folder in corresponds to one or more chapters of the above textbook and/or course. In addition to exercises and solution, each folder also contains a list of learning goals, a brief concept summary, and links to the relevant readings.
 
-All code is written in Python 3 and uses RL environments from [OpenAI Gym](https://gym.openai.com/). Advanced techniques use [Tensorflow](https://www.tensorflow.org/) for neural network implementations.
+Relevant Links:
+- Blog post: http://www.wildml.com/2016/10/learning-reinforcement-learning/
+
+- Repository: https://github.com/dennybritz/reinforcement-learning
+
+- Q-Learning simulator: Q-learning Simulator.
+
+- Two different solution proposals to the Easy21 assignement from David Silver's course:
+
+    - https://github.com/kvfrans/Easy21-RL
+
+    - https://github.com/luofan18/Reinforcement-learning-playing-easy21
 
 
 ### Table of Contents
