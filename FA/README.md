@@ -13,6 +13,9 @@
 - Building a big table, one value for each state or state-action pair, is memory- and data-inefficient. Function Approximation can generalize to unseen states by  using a featurized state representation.
 - Treat RL as supervised learning problem with the MC- or TD-target as the label and the current state/action as the input. Often the target also depends on the function estimator but we simply ignore its gradient. That's why these methods are called semi-gradient methods.
 - Challenge: We have non-stationary (policy changes, bootstrapping) and non-iid (correlated in time) data.
+  - Traditional supervised learning methods assume stationary data distributions. If the data distribution keeps changing (as in RL), training becomes challenging because the model must continuously adapt to new patterns.
+  - Sequential dependencies can lead to correlated updates, causing instability in learning.
+  - Changing distributions make it harder to generalize across states and actions.
 - Many methods assume that our action space is discrete because they rely on calculating the argmax over all actions. Large and continuous action spaces are ongoing research.
 - For Control very few convergence guarantees exist. For non-linear approximators there are basically no guarantees at all. But they tend to work in practice.
 - Experience Replay: Store experience as dataset, randomize it, and repeatedly apply minibatch SGD.
