@@ -8,7 +8,7 @@
 - Understand Q-Learning for off-policy control
 - Understand the benefits of TD algorithms over MC and DP approaches
 - Understand how n-step methods unify MC and TD approaches
-- Understand the backward and forward view of TD-Lambda
+- Understand the backward and forward view of TD($\lambda$)
 
 
 ### Summary
@@ -17,11 +17,13 @@
 - Whether MC or TD is better depends on the problem and there are no theoretical results that prove a clear winner.
 - General Update Rule: `Q[s,a] += learning_rate * (td_target - Q[s,a])`. `td_target - Q[s,a]` is also called the TD Error.
 - SARSA: On-Policy TD Control
-- TD Target for SARSA: `R[t+1] + discount_factor * Q[next_state][next_action]`
+  - TD Target for SARSA: `R[t+1] + discount_factor * Q[next_state][next_action]`
 - Q-Learning: Off-policy TD Control
-- TD Target for Q-Learning: `R[t+1] + discount_factor * max(Q[next_state])`
-- Q-Learning has a positive bias because it uses the maximum of estimated Q values to estimate the maximum action value, all from the same experience. Double Q-Learning gets around this by splitting the experience and using different Q functions for maximization and estimation.
+  - TD Target for Q-Learning: `R[t+1] + discount_factor * max(Q[next_state])`
+  - Q-Learning has a positive bias because it uses the maximum of estimated Q values to estimate the maximum action value, all from the same experience. Double Q-Learning gets around this by splitting the experience and using different Q functions for maximization and estimation.
+
 - N-Step methods unify MC and TD approaches. They making updates based on n-steps instead of a single step (TD-0) or a full episode (MC).
+- TD($\lambda$): Unify TD and DP approaches
 
 
 ### Lectures & Readings
