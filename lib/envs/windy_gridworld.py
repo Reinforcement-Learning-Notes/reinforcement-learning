@@ -66,7 +66,7 @@ class WindyGridworldEnv(discrete.DiscreteEnv):
 
         for s in range(self.nS):
             position = np.unravel_index(s, self.shape)
-            # print(self.s)
+            
             if self.s == s:
                 output = " x "
             elif position == (3,7):
