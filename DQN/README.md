@@ -11,7 +11,9 @@
 ### Summary
 
 - DQN: Q-Learning but with a Deep Neural Network as a function approximator.
-- Using a non-linear Deep Neural Network is powerful, but training is unstable if we apply it naively.
+- Problem:Using a non-linear Deep Neural Network is powerful, but training is unstable if we apply it naively.
+  - Correlated Updates: Sequential experiences (e.g., a robot moving in a maze) are highly dependent. Learning from them in order is like memorizing a movie frame-by-frame—it’s hard to generalize!
+  - Non-Stationary Targets: As the network learns, both its predictions and targets evolve together, leading to a "moving target" scenario where stability is hard to achieve.
 - Trick 1 - Experience Replay: Store experience `(S, A, R, S_next)` in a replay buffer and sample minibatches from it to train the network. This decorrelates the data and leads to better data efficiency. In the beginning, the replay buffer is filled with random experience.
 - Trick 2 - Target Network: Use a separate network to estimate the TD target. This target network has the same architecture as the function approximator but with frozen parameters. Every T steps (a hyperparameter) the parameters from the Q network are copied to the target network. This leads to more stable training because it keeps the target function fixed (for a while).
 - By using a Convolutional Neural Network as the function approximator on raw pixels of Atari games where the score is the reward we can learn to play many of those games at human-like performance.
@@ -23,7 +25,7 @@
 **Required:**
 
 - [Human-Level Control through Deep Reinforcement Learning](http://www.readcube.com/articles/10.1038/nature14236)
-- [Demystifying Deep Reinforcement Learning](https://ai.intel.com/demystifying-deep-reinforcement-learning/)
+- [Deep RL Bootcamp Lecture 3: Deep Q-Networks by Volodymyr Mnih](https://www.youtube.com/watch?v=fevMOp5TDQs)
 - David Silver's RL Course Lecture 6 - Value Function Approximation ([video](https://www.youtube.com/watch?v=UoPei5o4fps), [slides](http://www0.cs.ucl.ac.uk/staff/d.silver/web/Teaching_files/FA.pdf))
 
 **Optional:**
@@ -31,11 +33,6 @@
 - [Using Keras and Deep Q-Network to Play FlappyBird](https://yanpanlau.github.io/2016/07/10/FlappyBird-Keras.html)
 - [Deep Reinforcement Learning with Double Q-learning](http://arxiv.org/abs/1509.06461)
 - [Prioritized Experience Replay](http://arxiv.org/abs/1511.05952)
-
-**Deep Learning:**
-
-- [Tensorflow](http://www.tensorflow.org)
-- [Deep Learning Books](http://www.deeplearningbook.org/)
 
 ### Exercises
 
