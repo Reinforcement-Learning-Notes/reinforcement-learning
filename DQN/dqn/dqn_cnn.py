@@ -75,99 +75,6 @@ def dqn_update(
     optimizer.step()
     
     return loss.item()
-"""
-def run_dqn(
-    env_id: str = "ALE/Breakout-v5",
-    replay_buffer_size: int = 50_000,
-    target_network_update_interval: int = 1000,
-    learning_starts: int = 100,
-    exploration_initial_eps: float = 1.0,
-    exploration_final_eps: float = 0.01,
-    exploration_fraction: float = 0.1,
-    n_timesteps: int = 20_000,
-    update_interval: int = 2,
-    learning_rate: float = 3e-4,
-    batch_size: int = 64,
-    gamma: float = 0.99,
-    n_eval_episodes: int = 10,
-    evaluation_interval: int = 1000,
-    eval_exploration_rate: float = 0.0,
-    seed: int = 2023,
-    eval_render_mode: Optional[str] = None,  # "human", "rgb_array", None
-) -> CNNQNetwork:
-    # Set seeds for reproducibility
-    np.random.seed(seed)
-    th.manual_seed(seed)
-
-    # Create the training environment using our custom make_env
-    env = make_env(env_id, render_mode=None)
-    # Ensure that action space is discrete and observation space is as expected
-    assert isinstance(env.observation_space, gym.spaces.Box)
-    assert isinstance(env.action_space, gym.spaces.Discrete)
-    env.action_space.seed(seed)
-
-    # Create the evaluation environment using make_env
-    eval_env = make_env(env_id, render_mode=eval_render_mode)
-    eval_env.reset(seed=seed)
-    eval_env.action_space.seed(seed)
-
-    # Create the Q-network (designed for pixel inputs, e.g., shape (4, 84, 84))
-    q_net = CNNQNetwork(env.observation_space, env.action_space)
-    q_target_net = CNNQNetwork(env.observation_space, env.action_space)
-    q_target_net.load_state_dict(q_net.state_dict())
-
-    optimizer = th.optim.Adam(q_net.parameters(), lr=learning_rate)
-
-    # Create the Replay buffer
-    replay_buffer = ReplayBuffer(replay_buffer_size, env.observation_space, env.action_space)
-
-    # Reset the environment
-    obs, _ = env.reset(seed=seed)
-    
-    print("=== Training started ===")
-    for current_step in range(1, n_timesteps + 1):
-        # Optionally print progress every 10,000 steps
-        if current_step % 10_000 == 0:
-            print(f"Step {current_step}/{n_timesteps}")
-
-        exploration_rate = linear_schedule(
-            exploration_initial_eps,
-            exploration_final_eps,
-            current_step,
-            int(exploration_fraction * n_timesteps),
-        )
-        
-        # Collect one step using epsilon-greedy policy
-        obs = collect_one_step(
-            env,
-            q_net,
-            replay_buffer,
-            obs,
-            exploration_rate=exploration_rate,
-            verbose=0,
-        )
-
-        # Check periodically to update the target network for stabilize training
-        if (current_step % target_network_update_interval) == 0:
-            q_target_net.load_state_dict(q_net.state_dict())
-
-        # Check if we should perform a training update:
-        if (current_step % update_interval) == 0 and current_step > learning_starts:
-            dqn_update(q_net, q_target_net, optimizer, replay_buffer, batch_size, gamma=gamma)
-
-        if (current_step % evaluation_interval) == 0:
-            print(f"\n=== Evaluation at step {current_step} ===")
-            print(f"Exploration rate: {exploration_rate:.2f}")
-            evaluate_policy(eval_env, q_net, n_eval_episodes, eval_exploration_rate=eval_exploration_rate)
-            
-            # Save the Q-network checkpoint
-            safe_env_id = env_id.replace("/", "_")
-            os.makedirs("../logs", exist_ok=True)
-            th.save(q_net.state_dict(), f"../logs/q_net_checkpoint_{safe_env_id}_{current_step}.pth")
-            
-    print("=== Training finished ===")
-    return q_net
-"""
 
 def run_dqn(
     env_id: str = "ALE/Breakout-v5",
@@ -187,7 +94,9 @@ def run_dqn(
     eval_exploration_rate: float = 0.0,
     seed: int = 2023,
     eval_render_mode: Optional[str] = None,  # "human", "rgb_array", None
-    device: Optional[str] = None,  # Optional device argument
+    device: Optional[str] = None, 
+    checkpoint_path: Optional[str] = None,
+    new_learning_rate: Optional[float] = None,
 ) -> CNNQNetwork:
 
     # Determine the device: GPU if available, otherwise CPU
@@ -217,10 +126,22 @@ def run_dqn(
 
     # Create the Q-network and target network, and move them to device
     q_net = CNNQNetwork(env.observation_space, env.action_space).to(device)
-    q_target_net = CNNQNetwork(env.observation_space, env.action_space).to(device)
-    q_target_net.load_state_dict(q_net.state_dict())
 
     optimizer = th.optim.Adam(q_net.parameters(), lr=learning_rate)
+
+    if checkpoint_path is not None:
+        state_dict = th.load(checkpoint_path)
+        print(f"Resuming from checkpoint: {checkpoint_path}")
+        q_net.load_state_dict(state_dict)
+        
+        # Optionally override the learning rate for fine-tuning
+        if new_learning_rate is not None:
+            for param_group in optimizer.param_groups:
+                param_group["lr"] = new_learning_rate
+
+    # Create the target network and move it to device
+    q_target_net = CNNQNetwork(env.observation_space, env.action_space).to(device)
+    q_target_net.load_state_dict(q_net.state_dict())
 
     # Create the Replay buffer
     replay_buffer = ReplayBuffer(replay_buffer_size, env.observation_space, env.action_space)
@@ -257,7 +178,6 @@ def run_dqn(
         # by copying the parameters from the Q-network every target_network_update_interval steps
         if (current_step % target_network_update_interval) == 0:
             q_target_net.load_state_dict(q_net.state_dict())
-            print(f"Target network updated at step {current_step}")
 
         # Update the Q-network every update_interval steps
         # after learning_starts steps have passed (warmup phase)

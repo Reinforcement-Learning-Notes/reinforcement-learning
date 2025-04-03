@@ -196,7 +196,6 @@ def run_dqn(
         # Update the Q-network every update_interval steps
         # after learning_starts steps have passed (warmup phase)
         if (current_step % update_interval) == 0 and current_step > learning_starts:
-            # Do one gradient step
             dqn_update(q_net, q_target_net, optimizer, replay_buffer, batch_size, gamma=gamma)
 
         if (current_step % evaluation_interval) == 0:
