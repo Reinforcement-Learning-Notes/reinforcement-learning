@@ -26,6 +26,18 @@
 - N-Step methods unify MC and TD approaches. They making updates based on n-steps instead of a single step (TD-0) or a full episode (MC).
 - TD($\lambda$): Unify TD and DP approaches
 
+(Due to technical issues, the search service is temporarily unavailable.)
+
+Yes! Your algorithm is **TD(0)** (a **one-step Temporal Difference** method) because it updates the Q-values **immediately after each transition** \((s, a, r, s')\) using the **bootstrapped estimate** of the next state's value.  
+
+
+| Method          | Update Horizon          | Update Rule (Simplified)                     |
+|-----------------|-------------------------|---------------------------------------------|
+| **Monte Carlo** | Full episode            | $Q(s,a) \leftarrow Q(s,a) + \alpha [G_t - Q(s,a)]$ ($G_t$ is total return). |
+| **TD(0)**       | 1 step                  | $Q(s,a) \leftarrow Q(s,a) + \alpha [r + \gamma \max_{a'} Q(s',a') - Q(s,a)]$ |
+| **n-step TD**   | n steps                 | Uses rewards from $n$ steps + value of $s_{t+n}$. |
+| **TD(λ)**       | Weighted mix of all n   | Uses eligibility traces to blend 1-step, 2-step, ..., ∞-step returns. |
+
 
 ### Lectures & Readings
 
