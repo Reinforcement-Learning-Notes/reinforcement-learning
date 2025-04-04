@@ -96,3 +96,5 @@ ENV/
 
 **/logs/
 **/runs/
+
+.github/*
